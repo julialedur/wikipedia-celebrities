@@ -1,8 +1,8 @@
 import * as d3 from 'd3'
 
-const margin = { top: 10, left: 50, right: 50, bottom: 50 }
+const margin = { top: 10, left: 50, right: 20, bottom: 50 }
 const height = 600 - margin.top - margin.bottom
-const width = 700 - margin.left - margin.right
+const width = 900 - margin.left - margin.right
 
 var svg = d3
   .select('#chart-2')
@@ -36,8 +36,9 @@ function ready(datapoints) {
   d3.select('#all-countries').on('stepin', function() {
     svg
       .selectAll('circle')
-      .attr('fill', '#A6759B')
+      .attr('fill', '#660066')
       .attr('r', 4)
+      .attr('opacity', 0.3)
   })
 
   d3.select('#highlight-brazil').on('stepin', function() {
@@ -47,14 +48,14 @@ function ready(datapoints) {
       .attr('r', 4)
       .attr('fill', function(d) {
         if (d.countryCode === 'BR') {
-          return '#F3B247'
+          return '#a6759b'
         } else {
           return '#bfbfbf'
         }
       })
       .attr('opacity', function(d) {
         if (d.countryCode === 'BR') {
-          return 0.7
+          return 0.8
         } else {
           return 0.5
         }
@@ -75,7 +76,7 @@ function ready(datapoints) {
       .raise()
       .attr('fill', function(d) {
         if (d.countryCode === 'US') {
-          return '#F3B247'
+          return '#992317'
         } else {
           return '#bfbfbf'
         }
@@ -100,9 +101,11 @@ function ready(datapoints) {
     svg
       .selectAll('circle')
       .raise()
+      .transition()
+      .duration(400)
       .attr('fill', function(d) {
         if (d.name === 'Michael Jackson') {
-          return '#992317'
+          return '#F3B247'
         } else {
           return '#bfbfbf'
         }
@@ -116,7 +119,7 @@ function ready(datapoints) {
       })
       .attr('r', function(d) {
         if (d.name === 'Michael Jackson') {
-          return 7
+          return 11
         } else {
           return 4
         }
@@ -127,9 +130,11 @@ function ready(datapoints) {
     svg
       .selectAll('circle')
       .raise()
+      .transition()
+      .duration(400)
       .attr('fill', function(d) {
         if (d.name === 'Jesus Christ') {
-          return '#992317'
+          return '#F3B247'
         } else {
           return '#bfbfbf'
         }
@@ -143,7 +148,7 @@ function ready(datapoints) {
       })
       .attr('r', function(d) {
         if (d.name === 'Jesus Christ') {
-          return 7
+          return 11
         } else {
           return 4
         }
@@ -174,8 +179,8 @@ function ready(datapoints) {
         return yPositionScale(d.birthyear)
       }
     })
-    .attr('fill', '#A6759B')
-    .attr('opacity', 0.6)
+    .attr('fill', '#660066')
+    .attr('opacity', 0.3)
 
   /* Add in your axes */
 
@@ -186,11 +191,26 @@ function ready(datapoints) {
     .attr('class', 'axis y-axis')
     .call(yAxis)
 
-  const xAxis = d3.axisBottom(xPositionScale)
-  // .tickValues([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100])
-  // .tickFormat(function(n) {
-  //   return n + 'million'
-  // })
+  var ticks = [
+    '0',
+    '20,000,000',
+    '40,000,000',
+    '60,000,000',
+    '80,000,000',
+    '100,000,000',
+    '120,000,000',
+    '140,000,000'
+  ]
+
+  var tickLabels = [0, 20, 40, 60, 80, 100, 120, 140]
+
+  const xAxis = d3
+    .axisBottom(xPositionScale)
+    .tickFormat(function(d, i) {
+      return tickLabels[i]
+    })
+    .tickSizeInner(-height)
+
   svg
     .append('g')
     .attr('class', 'axis x-axis')
@@ -218,13 +238,13 @@ function ready(datapoints) {
     .attr('x', width / 2)
     .attr('font-family', 'Open Sans')
     .attr('font-size', 12)
-    .text('Total page views')
+    .text('Total page views (in millions)')
 
   function render() {
-    //console.log('something happened')
+    // console.log('something happened')
     // Calculate height/width
+    let screenWidth = svg.node().parentNode.parentNode.offsetWidth
     let screenHeight = window.innerHeight
-    let screenWidth = (width / height) * screenHeight
     let newWidth = screenWidth - margin.left - margin.right
     let newHeight = screenHeight - margin.top - margin.bottom
 
@@ -265,13 +285,21 @@ function ready(datapoints) {
       .attr('y', newHeight - margin.bottom)
       .attr('x', newWidth / 2)
 
-      .text('Total page views')
+      .text('Total page views (in millions)')
 
     // Update axes if necessary
+    const xAxis = d3
+      .axisBottom(xPositionScale)
+      .tickFormat(function(d, i) {
+        return tickLabels[i]
+      })
+      .tickSizeInner(-newHeight)
+
     svg
       .select('.x-axis')
       .attr('transform', 'translate(0,' + newHeight + ')')
       .call(xAxis)
+
     svg.select('.y-axis').call(yAxis)
   }
   window.addEventListener('resize', render)

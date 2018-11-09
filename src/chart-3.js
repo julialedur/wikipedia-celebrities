@@ -1,8 +1,8 @@
 import * as d3 from 'd3'
 
-const margin = { top: 30, left: 30, right: 60, bottom: 30 }
+const margin = { top: 30, left: 30, right: 20, bottom: 30 }
 const height = 900
-const width = 900
+const width = 1200
 
 const svg = d3
   .select('#chart-3')
@@ -378,39 +378,45 @@ function ready(datapoints) {
     circles.attr('cx', d => d.x).attr('cy', d => d.y)
   }
 
-  // function render() {
-  //   console.log('something happened')
-  //   // Calculate height/width
-  //   let screenHeight = window.innerHeight
-  //   let screenWidth = (width / height) * screenHeight
-  //   let newWidth = screenWidth - margin.left - margin.right
-  //   let newHeight = screenHeight - margin.top - margin.bottom
+  function render() {
+    console.log('something happened')
+    // Calculate height/width
+    let screenHeight = window.innerHeight
+    let screenWidth = (width / height) * screenHeight
+    let newWidth = screenWidth - margin.left - margin.right
+    let newHeight = screenHeight - margin.top - margin.bottom
 
-  //   // Update your SVG
-  //   let actualSvg = d3.select(svg.node().parentNode)
-  //   actualSvg
-  //     .attr('height', newHeight + margin.top + margin.bottom)
-  //     .attr('width', newWidth + margin.left + margin.right)
+    // Update your SVG
+    let actualSvg = d3.select(svg.node().parentNode)
+    actualSvg
+      .attr('height', newHeight + margin.top + margin.bottom)
+      .attr('width', newWidth + margin.left + margin.right)
 
-  //   // Update scales (depends on your scales)
-  //   // xPositionScale.range([0, newWidth])
-  //   // yPositionScale.range([newHeight, 0])
+    // Update scales (depends on your scales)
+    // xPositionScale.range([0, newWidth])
+    // yPositionScale.range([newHeight, 0])
 
-  //   // Reposition/redraw your elements
+    // Reposition/redraw your elements
 
-  //   var forceXCombine = d3.forceX(newWidth / 2.5).strength(0.05)
-  //   var forceYCombine = d3.forceY(newHeight / 3).strength(0.05)
+    var forceXCombine = d3.forceX(newWidth / 2.5).strength(0.05)
+    var forceYCombine = d3.forceY(newHeight / 3).strength(0.05)
 
-  //   var simulation = d3
-  //     .forceSimulation()
-  //     .force('x', forceXCombine)
-  //     .force('y', d3.forceY(newHeight / 2).strength(0.06))
+    var simulation = d3
+      .forceSimulation()
+      .force('x', forceXCombine)
+      .force('y', d3.forceY(newHeight / 2).strength(0.06))
 
-  //   datapoints.forEach(d => {
-  //     d.x = width * 0.25 + Math.random() * width * 0.5
-  //     d.y = height * 0.25 + Math.random() * height * 0.5
-  //   })
-  // }
-  // window.addEventListener('resize', render)
-  // render()
+    datapoints.forEach(d => {
+      d.x = width * 0.25 + Math.random() * width * 0.5
+      d.y = height * 0.25 + Math.random() * height * 0.5
+    })
+
+    simulation
+      .force('x', forceXCombine)
+      .force('y', forceYCombine)
+      .alphaTarget(0.7)
+      .restart()
+  }
+  window.addEventListener('resize', render)
+  render()
 }
